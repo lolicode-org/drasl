@@ -3,17 +3,17 @@
 
   # Nixpkgs / NixOS version to use.
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-22.11";
-    npmlock2nix = {
-      url = "github:nix-community/npmlock2nix";
-      flake = false;
+    nixpkgs.url = "nixpkgs/nixos-23.11";
+    buildNodeModules = {
+      url = "github:adisbladis/buildNodeModules";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = {
     self,
     nixpkgs,
-    npmlock2nix,
+    buildNodeModules,
   }: let
     version = "1.0.3";
 
@@ -23,48 +23,69 @@
     # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.
     forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
-    # Nixpkgs instantiated for supported system types.
-    nixpkgsFor = forAllSystems (system: let
-      overlays = [
-        (final: prev: {
-          npmlock2nix = import npmlock2nix {pkgs = prev;};
-        })
-      ];
-    in
-      import nixpkgs {inherit system overlays;});
+    overlays = [];
+
+    nixpkgsFor = forAllSystems (system: import nixpkgs {inherit system overlays;});
+    nixpkgsCross =
+      forAllSystems (localSystem:
+        forAllSystems (crossSystem: import nixpkgs {inherit localSystem crossSystem overlays;}));
   in {
-    # Provide some binary packages for selected system types.
     packages = forAllSystems (system: let
-      pkgs = nixpkgsFor.${system};
-      nodeModules = pkgs.npmlock2nix.v2.node_modules {
-        src = ./.;
-        nodejs = pkgs.nodejs;
-      };
-    in {
-      drasl = pkgs.buildGoModule {
-        pname = "drasl";
-        inherit version;
-        src = ./.;
+      buildDrasl = pkgs: let
+        nodejs = pkgs.nodejs_20;
+        nodeModules = buildNodeModules.lib.${system}.buildNodeModules {
+          inherit nodejs;
+          packageRoot = ./.;
+        };
+      in
+        pkgs.buildGoModule {
+          pname = "drasl";
+          inherit version;
+          src = ./.;
 
-        # Update whenever Go dependencies change
-        vendorSha256 = "sha256-4AwUwDClrYp4jAqqMex38ElmbZwj5BY7LNmcddfV/ro=";
+          # Update whenever Go dependencies change
+          vendorHash = "sha256-4AwUwDClrYp4jAqqMex38ElmbZwj5BY7LNmcddfV/ro=";
 
-        outputs = ["out"];
+          outputs = ["out"];
 
-        preConfigure = ''
-          substituteInPlace build_config.go --replace "\"/usr/share/drasl\"" "\"$out/share/drasl\""
-        '';
+          preConfigure = ''
+            substituteInPlace build_config.go --replace "\"/usr/share/drasl\"" "\"$out/share/drasl\""
+          '';
 
-        preBuild = ''
-          ln -s ${nodeModules}/node_modules node_modules
-          ${pkgs.nodejs}/bin/node esbuild.config.js
-        '';
+          nativeBuildInputs = [nodejs];
 
-        postInstall = ''
-          mkdir -p "$out/share/drasl"
-          cp -R ./{assets,view,public} "$out/share/drasl"
-        '';
-      };
+          preBuild = ''
+            ln -s ${nodeModules}/node_modules node_modules
+            node esbuild.config.js
+          '';
+
+          postInstall = ''
+            mkdir -p "$out/share/drasl"
+            cp -R ./{assets,view,public} "$out/share/drasl"
+          '';
+        };
+
+      buildDockerImage = pkgs:
+        pkgs.dockerTools.buildLayeredImage {
+          name = "unmojang/drasl";
+          tag = "latest";
+          contents = with pkgs; [cacert];
+          config.Cmd = "${buildDrasl pkgs}/bin/drasl";
+        };
+    in rec {
+      drasl = buildDrasl nixpkgsFor.${system};
+
+      drasl-cross-x86_64-linux = buildDrasl nixpkgsCross.${system}.x86_64-linux;
+      drasl-cross-x86_64-darwin = buildDrasl nixpkgsCross.${system}.x86_64-darwin;
+      drasl-cross-aarch64-linux = buildDrasl nixpkgsCross.${system}.aarch64-linux;
+      drasl-cross-aarch64-darwin = buildDrasl nixpkgsCross.${system}.aarch64-darwin;
+
+      docker = buildDockerImage nixpkgsFor.${system};
+
+      docker-cross-x86_64-linux = buildDockerImage nixpkgsCross.${system}.x86_64-linux;
+      docker-cross-x86_64-darwin = buildDockerImage nixpkgsCross.${system}.x86_64-darwin;
+      docker-cross-aarch64-linux = buildDockerImage nixpkgsCross.${system}.aarch64-linux;
+      docker-cross-aarch64-darwin = buildDockerImage nixpkgsCross.${system}.aarch64-darwin;
     });
 
     nixosModules.drasl = {
