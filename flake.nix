@@ -1,7 +1,6 @@
 {
   description = "Self-hosted API server for Minecraft";
 
-  # Nixpkgs / NixOS version to use.
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-23.11";
     buildNodeModules = {
@@ -17,18 +16,17 @@
   }: let
     version = "1.0.3";
 
-    # System types to support.
-    supportedSystems = ["x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin"];
+    # nodejs_20 is currently broken on Darwin
+    supportedSystems = ["x86_64-linux" "aarch64-linux"];
+    # supportedSystems = ["x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin"];
 
     # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.
     forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
-    overlays = [];
-
-    nixpkgsFor = forAllSystems (system: import nixpkgs {inherit system overlays;});
+    nixpkgsFor = forAllSystems (system: import nixpkgs {inherit system;});
     nixpkgsCross =
       forAllSystems (localSystem:
-        forAllSystems (crossSystem: import nixpkgs {inherit localSystem crossSystem overlays;}));
+        forAllSystems (crossSystem: import nixpkgs {inherit localSystem crossSystem;}));
   in {
     packages = forAllSystems (system: let
       buildDrasl = pkgs: let
@@ -65,10 +63,9 @@
           '';
         };
 
-      buildDockerImage = pkgs:
+      buildOCIImage = pkgs:
         pkgs.dockerTools.buildLayeredImage {
           name = "unmojang/drasl";
-          tag = "latest";
           contents = with pkgs; [cacert];
           config.Cmd = "${buildDrasl pkgs}/bin/drasl";
         };
@@ -76,16 +73,16 @@
       drasl = buildDrasl nixpkgsFor.${system};
 
       drasl-cross-x86_64-linux = buildDrasl nixpkgsCross.${system}.x86_64-linux;
-      drasl-cross-x86_64-darwin = buildDrasl nixpkgsCross.${system}.x86_64-darwin;
+      # drasl-cross-x86_64-darwin = buildDrasl nixpkgsCross.${system}.x86_64-darwin;
       drasl-cross-aarch64-linux = buildDrasl nixpkgsCross.${system}.aarch64-linux;
-      drasl-cross-aarch64-darwin = buildDrasl nixpkgsCross.${system}.aarch64-darwin;
+      # drasl-cross-aarch64-darwin = buildDrasl nixpkgsCross.${system}.aarch64-darwin;
 
-      docker = buildDockerImage nixpkgsFor.${system};
+      oci = buildOCIImage nixpkgsFor.${system};
 
-      docker-cross-x86_64-linux = buildDockerImage nixpkgsCross.${system}.x86_64-linux;
-      docker-cross-x86_64-darwin = buildDockerImage nixpkgsCross.${system}.x86_64-darwin;
-      docker-cross-aarch64-linux = buildDockerImage nixpkgsCross.${system}.aarch64-linux;
-      docker-cross-aarch64-darwin = buildDockerImage nixpkgsCross.${system}.aarch64-darwin;
+      oci-cross-x86_64-linux = buildOCIImage nixpkgsCross.${system}.x86_64-linux;
+      # oci-cross-x86_64-darwin = buildOCIImage nixpkgsCross.${system}.x86_64-darwin;
+      oci-cross-aarch64-linux = buildOCIImage nixpkgsCross.${system}.aarch64-linux;
+      # oci-cross-aarch64-darwin = buildOCIImage nixpkgsCross.${system}.aarch64-darwin;
     });
 
     nixosModules.drasl = {
