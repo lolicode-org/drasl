@@ -1,10 +1,8 @@
 {{ template "layout" . }}
 
-{{ define "title" }}Register - {{ .App.Config.ApplicationName }}{{ end }}
+{{ define "title" }}注册 - {{ .App.Config.ApplicationName }}{{ end }}
 
-{{ define
-  "content"
-}}
+{{ define "content" }}
   {{ template "header" . }}
 
   {{ $dividerNeeded := false }}
@@ -18,10 +16,10 @@
     <h3><img class="openid-logo" src="{{ .App.PublicURL }}/openid-logo.svg" alt="OpenID logo"></h3>
     {{ range $provider := $.WebOIDCProviders }}
       {{ if and $provider.RequireInvite (not $.InviteCode) }}
-        Signing in with {{ $provider.Name }} is invite-only.
+        使用 {{ $provider.Name }} 登陆需要获得邀请。
       {{ else }}
         <p>
-          <a href="{{ $provider.AuthURL }}">Sign in with {{ $provider.Name }}</a>
+          <a href="{{ $provider.AuthURL }}">使用 {{ $provider.Name }} 登陆</a>
         </p>
       {{ end }}
     {{ end }}
@@ -34,33 +32,33 @@
       <div class="divider">or</div>
       {{ $dividerNeeded = false }}
     {{ end }}
-    <h3>Register</h3>
+    <h3>注册</h3>
     {{ if and .App.Config.RegistrationNewPlayer.RequireInvite (not .InviteCode) }}
-      <p>Registration as a new player is invite-only.</p>
+      <p>新玩家注册仅限邀请。</p>
     {{ else }}
       {{ if .App.Config.CreateNewPlayer.AllowChoosingUUID }}
-        <p>Register a new account:</p>
+        <p>注册一个新账号：</p>
       {{ else }}
-        <p>Register a new account with a random UUID:</p>
+        <p>注册一个随机 UUID 的新账号：</p>
       {{ end }}
       <form action="{{ .App.FrontEndURL }}/web/register" method="post">
         <input
           type="text"
           name="playerName"
-          placeholder="Username"
+          placeholder="用户名"
           maxlength="{{ .App.Constants.MaxUsernameLength }}"
           required
         />
         <input
           type="text"
           name="email"
-          placeholder="Leave this blank"
+          placeholder="请勿填写"
           class="honeypot"
         />
         <input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder="密码"
           minlength="{{ .App.Config.MinPasswordLength }}"
           class="long"
           required
@@ -71,7 +69,7 @@
               class="long"
               type="text"
               name="uuid"
-              placeholder="Player UUID (leave blank for random)"
+              placeholder="玩家UUID（留空随机生成）"
               pattern="^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$"
             />
           </p>
@@ -79,10 +77,10 @@
         <input type="text" name="inviteCode" value="{{ .InviteCode }}" hidden />
         <input hidden name="returnUrl" value="{{ .URL }}" />
         {{ if .InviteCode }}
-          <p><em>Using invite code {{ .InviteCode }}</em></p>
+          <p><em>将使用邀请码 {{ .InviteCode }} 注册</em></p>
         {{ end }}
         <p>
-          <input type="submit" value="Register" />
+          <input type="submit" value="注册" />
         </p>
       </form>
     {{ end }}
@@ -95,70 +93,58 @@
       <div class="divider">or</div>
       {{ $dividerNeeded = false }}
     {{ end }}
-    <h3>Register from an existing Minecraft player</h3>
+    <h3>从现有的Minecraft帐号注册</h3>
     {{ if and .App.Config.RegistrationExistingPlayer.RequireInvite (not
       .InviteCode)
     }}
-      <p>Registration as an existing player is invite-only.</p>
+      <p>从现有的Minecraft帐号注册需要获得邀请。</p>
     {{ else }}
       {{ if .App.Config.ImportExistingPlayer.RequireSkinVerification }}
         <p>
-          Register a new account with the UUID of an existing
-          {{ .App.Config.ImportExistingPlayer.Nickname }} account.
-          Requires verification that you own the account.
+          使用{{ .App.Config.ImportExistingPlayer.Nickname }}帐号的 UUID 注册新账号。
+          这需要验证您拥有该账号。
         </p>
         {{ if .InviteCode }}
-          <p><em>Using invite code {{ .InviteCode }}</em></p>
+          <p><em>将使用邀请码 {{ .InviteCode }} 注册</em></p>
         {{ end }}
         <form action="{{ .App.FrontEndURL }}/web/register-challenge" method="get">
           <input
             type="text"
             name="playerName"
-            placeholder="{{ .App.Config.ImportExistingPlayer.Nickname }} Player name"
+            placeholder="{{ .App.Config.ImportExistingPlayer.Nickname }}帐号昵称"
             maxlength="{{ .App.Constants.MaxUsernameLength }}"
             required
           />
-          <input
-            type="text"
-            name="inviteCode"
-            value="{{ .InviteCode }}"
-            hidden
-          />
+          <input type="text" name="inviteCode" value="{{ .InviteCode }}" hidden />
           <input hidden name="returnUrl" value="{{ .URL }}" />
-          <input type="submit" value="Continue" />
+          <input type="submit" value="继续" />
         </form>
       {{ else }}
         <p>
-          Register a new account with the UUID of an existing
-          {{ .App.Config.ImportExistingPlayer.Nickname }} account.
+          使用{{ .App.Config.ImportExistingPlayer.Nickname }}帐号的 UUID 注册新账号。
         </p>
         <form action="{{ .App.FrontEndURL }}/web/register" method="post">
           <input
             type="text"
             name="playerName"
-            placeholder="{{ .App.Config.ImportExistingPlayer.Nickname }} Player name"
+            placeholder="{{ .App.Config.ImportExistingPlayer.Nickname }}帐号昵称"
             maxlength="{{ .App.Constants.MaxUsernameLength }}"
             required
           />
           <input
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="密码"
             minlength="{{ .App.Config.MinPasswordLength }}"
             class="long"
             required
           />
           <input type="checkbox" name="existingPlayer" checked hidden />
-          <input
-            type="text"
-            name="inviteCode"
-            value="{{ .InviteCode }}"
-            hidden
-          />
+          <input type="text" name="inviteCode" value="{{ .InviteCode }}" hidden />
           {{ if .InviteCode }}
-            <p><em>Using invite code {{ .InviteCode }}</em></p>
+            <p><em>将使用邀请码 {{ .InviteCode }} 注册</em></p>
           {{ end }}
-          <input type="submit" value="Register" />
+          <input type="submit" value="注册" />
         </form>
       {{ end }}
     {{ end }}

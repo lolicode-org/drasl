@@ -2,9 +2,9 @@ package main
 
 // Build constants
 
-const VERSION = "3.1.1"
+const VERSION = "3.1.1 CN"
 
-const REPOSITORY_URL = "https://github.com/unmojang/drasl"
+const REPOSITORY_URL = "https://github.com/lolicode-org/drasl"
 const SWAGGER_UI_URL = "https://doc.drasl.unmojang.org"
 
 const LICENSE = "GPLv3"

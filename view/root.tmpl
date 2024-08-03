@@ -4,7 +4,7 @@
 
 {{ define "content" }}
   {{ template "header" . }}
-  <h3>Log in</h3>
+  <h3>登陆</h3>
 
   {{ $dividerNeeded := false }}
 
@@ -16,7 +16,7 @@
     <h3><img class="openid-logo" src="{{ .App.PublicURL }}/openid-logo.svg" alt="OpenID logo"></h3>
     {{ range $provider := $.WebOIDCProviders }}
         <p>
-          <a href="{{ $provider.AuthURL }}">Sign in with {{ $provider.Name }}</a>
+          <a href="{{ $provider.AuthURL }}">使用 {{ $provider.Name }} 登陆</a>
         </p>
     {{ end }}
     {{ $dividerNeeded = true }}
@@ -28,42 +28,42 @@
       {{ $dividerNeeded = false }}
     {{ end }}
     <form action="{{ .App.FrontEndURL }}/web/login" method="post">
-      <input type="text" name="username" placeholder="Username" required />
+      <input type="text" name="username" placeholder="用户名" required />
       <input hidden name="returnUrl" value="{{ .URL }}" />
       <input hidden name="destination" value="{{ .Destination }}" />
       <input
         class="long"
         type="password"
         name="password"
-        placeholder="Password"
+        placeholder="密码"
         required
       />
-      <input type="submit" value="Log in" />
+      <input type="submit" value="登陆" />
     </form>
     {{ $dividerNeeded = true }}
   {{ end }}
 
-  <h3>Configuring your client</h3>
+  <h3>配置您的客户端</h3>
   <p>
-    Using {{ .App.Config.ApplicationName }} on the client requires a third-party launcher that supports
-    custom API servers.
-    <a href="https://github.com/unmojang/FjordLauncher">Fjord Launcher</a>, a
-    fork of Prism Launcher, is recommended, but
-    <a href="https://github.com/huanghongxun/HMCL">HMCL</a> also works. Both are
-    free/libre.
+    在客户端使用 {{ .App.Config.ApplicationName }} 需要支持自定义 API 服务器的第三方启动器。
+    推荐使用
+    <a href="https://github.com/unmojang/FjordLauncher">Fjord 启动器</a>，这是
+    Prism 启动器的一个分支，但您也可以使用
+    <a href="https://github.com/huanghongxun/HMCL">HMCL</a> 。两者都是
+    免费的自由软件。
   </p>
 
-  <h4>Fjord Launcher</h4>
+  <h4>Fjord 启动器</h4>
 
   <ol>
     <li>
-      Click your account in the top right and select "Manage Accounts...".
+      点击右上角的帐号并选择“管理帐号”。
     </li>
-    <li>Click "Add authlib-injector" in the right-hand sidebar.</li>
+    <li>点击右侧边栏中的“添加 authlib-injector”。</li>
     <li>
-      Enter your player name and your {{ .App.Config.ApplicationName }} password or Minecraft Token, and use
+      输入您的玩家名和 {{ .App.Config.ApplicationName }} 密码，或者Minecraft Token，并使用
       <a href="{{ .App.AuthlibInjectorURL }}">{{ .App.AuthlibInjectorURL }}</a>
-      for the URL. Click "OK".
+      作为 URL。点击“确定”。
     </li>
   </ol>
 
@@ -71,59 +71,55 @@
 
   <ol>
     <li>
-      Go to the "Account List" view by clicking the account at the top of the
-      sidebar.
+      点击侧边栏顶部的帐号，进入“帐号列表”视图。
     </li>
     <li>
-      At the bottom left, click "New Auth Server" and enter
-      <a href="{{ .App.AuthlibInjectorURL }}">{{ .App.AuthlibInjectorURL }}</a>.
-      Click "Next" and then "Finish".
+      左下角点击“新建认证服务器”，输入
+      <a href="{{ .App.AuthlibInjectorURL }}">{{ .App.AuthlibInjectorURL }}</a>。
+      点击“下一步”，然后点击“完成”。
     </li>
     <li>
-      In the sidebar, click the newly-added authentication server, labeled
-      "{{ .App.Config.InstanceName }}". Enter your {{ .App.Config.ApplicationName }} player name and password
-      and click "Login".
+      在侧边栏中，点击新添加的认证服务器，标签为
+      “{{ .App.Config.InstanceName }}”。输入您的 {{ .App.Config.ApplicationName }} 玩家名和密码，然后点击“登陆”。
     </li>
   </ol>
 
-  <h4>Other Launchers</h4>
+  <h4>其他启动器</h4>
 
   <p>
-    Use the authlib-injector URL
-    <a href="{{ .App.AuthlibInjectorURL }}">{{ .App.AuthlibInjectorURL }}</a>.
+    如果您的启动器支持使用 authlib-injector， 可以使用以下 URL：
+    <a href="{{ .App.AuthlibInjectorURL }}">{{ .App.AuthlibInjectorURL }}</a>。
   </p>
 
   <p>
-    Or, if your launcher supports custom API servers but not via
-    authlib-injector, use the following URLs:
+    或者，如果您的启动器支持自定义 API 服务器但不支持 authlib-injector，您可以使用以下 URL 进行配置：
   </p>
 
   <table>
     <tr>
-      <td>Authentication Server:</td>
+      <td>认证服务器：</td>
       <td>{{ .App.AuthURL }}</td>
     </tr>
     <tr>
-      <td>Account Server:</td>
+      <td>帐号服务器：</td>
       <td>{{ .App.AccountURL }}</td>
     </tr>
     <tr>
-      <td>Session Server:</td>
+      <td>会话服务器：</td>
       <td>{{ .App.SessionURL }}</td>
     </tr>
     <tr>
-      <td>Services Server:</td>
+      <td>服务服务器：</td>
       <td>{{ .App.ServicesURL }}</td>
     </tr>
   </table>
 
-  <h3>Configuring your server</h3>
+  <h3>配置您的服务器</h3>
 
-  <h4>Minecraft 1.16 and later</h4>
+  <h4>Minecraft 1.16 及以后版本</h4>
 
-  On recent versions of Minecraft, you can use {{ .App.Config.ApplicationName }} on an unmodified Vanilla
-  server. To do so, add the following arguments before you specify the jar file
-  when you start the server:
+  在较新版本的 Minecraft 上，您可以在原版服务器上使用 {{ .App.Config.ApplicationName }}。
+  只需在启动服务器时，在指定 jar 文件之前添加以下参数：
   <pre style="word-wrap: break-word; white-space: pre-wrap; overflow-x: auto">
 -Dminecraft.api.env=custom
 -Dminecraft.api.auth.host={{ .App.AuthURL }}
@@ -131,7 +127,7 @@
 -Dminecraft.api.session.host={{ .App.SessionURL }}
 -Dminecraft.api.services.host={{ .App.ServicesURL }}</pre>
 
-  For example, the full command you use to start the server might be:
+  例如，启动服务器的完整命令可能是：
   <pre style="word-wrap: break-word; white-space: pre-wrap; overflow-x: auto">
 java -Xmx1024M -Xms1024M \
     -Dminecraft.api.env=custom \
@@ -141,24 +137,24 @@ java -Xmx1024M -Xms1024M \
     -Dminecraft.api.services.host={{ .App.ServicesURL }} \
     -jar server.jar nogui</pre>
 
-  <h4>Minecraft 1.7.2 through 1.15.2</h4>
+  <h4>Minecraft 1.7.2 到 1.15.2</h4>
 
   <p>
-    Refer to the authlib-injector documentation on setting up a server:
+    请参阅 authlib-injector 文档了解如何设置服务器：
     <a
       href="https://github.com/yushijinhun/authlib-injector/blob/develop/README.en.md#deploy"
       >https://github.com/yushijinhun/authlib-injector/blob/develop/README.en.md#deploy</a
-    >.
+    >。
   </p>
 
   <p>
-    Alternatively, you can patch your server to use a newer version of Mojang's authlib that supports the arguments for custom API servers. Replace the files under <code>com/mojang/authlib</code> in your <code>server.jar</code> with the files in <a href="https://libraries.minecraft.net/com/mojang/authlib/1.6.25/authlib-1.6.25.jar">authlib-1.6.25.jar</a>.
+    或者，您可以修补您的服务器以使用支持自定义 API 服务器的更新版本的 Mojang 的 authlib。在<code>server.jar</code>中，将路径 <code>com/mojang/authlib</code> 下的文件替换为 <a href="https://libraries.minecraft.net/com/mojang/authlib/1.6.25/authlib-1.6.25.jar">authlib-1.6.25.jar</a>.
   </p>
 
-  <h4><a href="https://minecraft.wiki/w/Java_Edition_Late_Classic">Late Classic</a>, Alpha, Beta, etc. through Minecraft 1.6.4</h4>
+  <h4><a href="https://minecraft.wiki/w/Java_Edition_Late_Classic">Late Classic</a>, Alpha, Beta 等早期版本到 Minecraft 1.6.4</h4>
 
   <p>
-    Use <a href="https://github.com/craftycodie/OnlineModeFix">OnlineModeFix</a> and start the server with the <code>-Dminecraft.api.*.host</code> arguments described above. For example, the full command you use to start the server might be:
+    使用 <a href="https://github.com/craftycodie/OnlineModeFix">OnlineModeFix</a> 并使用上文提到的 <code>-Dminecraft.api.*.host</code> 参数来启动服务器。例如，启动服务器的完整命令可能是：
 
     <pre style="word-wrap: break-word; white-space: pre-wrap; overflow-x: auto">
 java -Xmx1024M -Xms1024M \

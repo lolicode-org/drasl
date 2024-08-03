@@ -3,15 +3,17 @@
   {{ template "header" . }}
 
   <p>
-    We need to verify that you own the
-    {{ .App.Config.ImportExistingPlayer.Nickname }} account
-    "{{ .PlayerName }}" before you register its UUID.
+    在注册这个UUID前，我们需要验证你拥有该{{ .App.Config.ImportExistingPlayer.Nickname }}帐号：
+    "{{ .PlayerName }}"。
   </p>
 
   <p>
-    Download this image and set it as your skin on your
+    下载此图片并将其设置为您的
     {{ .App.Config.ImportExistingPlayer.Nickname }}
-    account{{ if .App.Config.ImportExistingPlayer.SetSkinURL }}, <a target="_blank" href="{{ .App.Config.ImportExistingPlayer.SetSkinURL }}">here</a>{{ end }}.
+    帐号的皮肤{{ if .App.Config.ImportExistingPlayer.SetSkinURL }}, <a target="_blank" href="{{ .App.Config.ImportExistingPlayer.SetSkinURL }}">点击这里前往皮肤设置</a>{{ end }}.
+  </p>
+  <p>
+    该皮肤仅用于验证您拥有该帐号，注册后您可以更改皮肤。
   </p>
 
   <div style="text-align: center">
@@ -20,13 +22,13 @@
       width="256"
       height="256"
       style="image-rendering: pixelated; width: 256px;"
-      alt="{{ .App.Config.ApplicationName }} verification skin"
+      alt="{{ .App.Config.ApplicationName }} 验证皮肤"
     />
     <p>
       <a
         download="{{ .SkinFilename }}"
         href="data:image/png;base64,{{ .SkinBase64 }}"
-        >Download skin</a
+        >下载皮肤</a
       >
     </p>
   </div>
@@ -35,30 +37,29 @@
   {{ if eq .Action "register" }}
     {{ if .UseIDToken }}
       <p>
-        When you are done, hit "Register".
+        完成后请点击“注册”。
       </p>
     {{ else }}
       <p>
-        When you are done, enter a password for your {{ .App.Config.ApplicationName }} account and hit
-        "Register".
+        完成后，请为您的 {{ .App.Config.ApplicationName }} 帐号输入密码并点击“注册”。
       </p>
     {{ end }}
     <form action="{{ .App.FrontEndURL }}/web/register" method="post">
       <input hidden type="text" name="playerName" value="{{ .PlayerName }}"
       />
       {{ if not .UseIDToken }}
-        <input type="password" name="password" placeholder="Password" required />
+        <input type="password" name="password" placeholder="密码" required />
       {{ end }}
       <input hidden type="checkbox" name="existingPlayer" checked />
       <input hidden type="checkbox" name="useIdToken" {{ if .UseIDToken }}checked{{ end }} />
       <input hidden name="challengeToken" value="{{ .ChallengeToken }}" />
       <input hidden name="inviteCode" value="{{ .InviteCode }}" />
       <input hidden name="returnUrl" value="{{ .URL }}" />
-      <input type="submit" value="Register" />
+      <input type="submit" value="注册" />
     </form>
   {{ else if eq .Action "create-player" }}
     <p>
-      When you are done, hit "Create player".
+      完成后请点击“创建角色”。
     </p>
     <form action="{{ .App.FrontEndURL }}/web/create-player" method="post">
       <input hidden name="userUuid" value="{{ .UserUUID }}"/>
@@ -66,7 +67,7 @@
       <input hidden type="checkbox" name="existingPlayer" checked />
       <input hidden name="challengeToken" value="{{ .ChallengeToken }}" />
       <input hidden name="returnUrl" value="{{ .URL }}" />
-      <input type="submit" value="Create player" />
+      <input type="submit" value="创建角色" />
     </form>
   {{ end }}
 

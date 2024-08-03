@@ -1,12 +1,11 @@
 {{ template "layout" . }}
 
-{{ define "title" }}Admin - {{ .App.Config.ApplicationName }}{{ end }}
+{{ define "title" }}管理 - {{ .App.Config.ApplicationName }}{{ end }}
 
 {{ define "content" }}
   {{ template "header" . }}
 
-
-  <h4>Pending Invites</h4>
+  <h4>未使用的邀请</h4>
 
   <div style="text-align: right">
     <form
@@ -15,15 +14,15 @@
       method="post"
     >
       <input hidden name="returnUrl" value="{{ .URL }}" />
-      <input type="submit" value="+ New Invite" />
+      <input type="submit" value="+ 新邀请" />
     </form>
   </div>
   {{ if .Invites }}
     <table>
       <thead>
         <tr>
-          <td style="width: 50%">Link</td>
-          <td>Date&nbsp;Generated</td>
+          <td style="width: 50%">链接</td>
+          <td>生成日期</td>
           <td></td>
         </tr>
       </thead>
@@ -50,7 +49,7 @@
                   value="{{ $invite.Code }}"
                   hidden
                 />
-                <input type="submit" value="× Delete" />
+                <input type="submit" value="× 删除" />
               </form>
             </td>
           </tr>
@@ -58,10 +57,9 @@
       </tbody>
     </table>
   {{ else }}
-    No invites to show.
+    没有邀请可显示。
   {{ end }}
-
-  <h4>All Users</h4>
+  <h4>所有用户</h4>
 
   <div style="display: none">
     {{ range $user := .Users }}
@@ -69,7 +67,7 @@
         id="delete-{{ $user.UUID }}"
         action="{{ $.App.FrontEndURL }}/web/delete-user"
         method="post"
-        onsubmit="return confirm('Are you sure you want to delete the account “{{ $user.Username }}”? This action is irreversible.');"
+        onsubmit="return confirm('确定删除帐号“{{ $user.Username }}”吗？此操作不可逆');"
       >
         <input
           hidden
@@ -89,12 +87,12 @@
     <table>
       <thead>
         <tr>
-          <td colspan="2">User</td>
-          <td>Players</td>
-          <td>Max&nbsp;#&nbsp;players*</td>
-          <td>Admin</td>
-          <td>Locked</td>
-          <td>Delete&nbsp;Account</td>
+          <td colspan="2">用户</td>
+          <td>角色</td>
+          <td>最大角色数量*</td>
+          <td>管理员</td>
+          <td>锁定</td>
+          <td>删除帐号</td>
         </tr>
       </thead>
       <tbody>
@@ -122,7 +120,7 @@
                   <a href="{{ $.App.FrontEndURL }}/web/player/{{ $player.UUID }}">{{ $player.Name }}</a>
                 {{ end }}
               {{ else if gt (len $user.Players) 1 }}
-                {{ len $user.Players }}&nbsp;players
+                {{ len $user.Players }}个角色
               {{ end }}
             </td>
             <td>
@@ -130,7 +128,7 @@
                 name="max-player-count-{{ $user.UUID }}"
                 type="number"
                 {{ if $user.IsAdmin }}
-                  title="Admins can always create unlimited players"
+                  title="管理员可以创建无限个角色"
                   disabled
                 {{ end }}
                 value="{{ if or $user.IsAdmin (eq $user.MaxPlayerCount $.App.Constants.MaxPlayerCountUnlimited) }}-1{{ else if eq $user.MaxPlayerCount $.App.Constants.MaxPlayerCountUseDefault}}{{ else }}{{ $user.MaxPlayerCount }}{{ end }}"
@@ -140,7 +138,7 @@
             <td>
               <input
                 name="admin-{{ $user.UUID }}"
-                title="Admin?"
+                title="管理员？"
                 type="checkbox"
                 {{ if
                   $user.IsAdmin
@@ -158,7 +156,7 @@
             <td>
               <input
                 name="locked-{{ $user.UUID }}"
-                title="Locked?"
+                title="锁定？"
                 type="checkbox"
                 {{ if
                   $user.IsLocked
@@ -171,17 +169,17 @@
               <input
                 type="submit"
                 form="delete-{{ $user.UUID }}"
-                value="× Delete"
+                value="× 删除"
               />
             </td>
           </tr>
         {{ end }}
       </tbody>
     </table>
-    <p><small>*Specify -1 to allow an unlimited number of players. Leave blank to use the default max number, which is {{ $.App.Config.DefaultMaxPlayerCount }}.</small></p>
+    <p><small>*填写-1即可允许创建无限个角色，留空以使用默认的限制（{{ $.App.Config.DefaultMaxPlayerCount }}个）.</small></p>
     <p style="text-align: center">
       <input hidden name="returnUrl" value="{{ $.URL }}" />
-      <input type="submit" value="Save changes" />
+      <input type="submit" value="保存更改" />
     </p>
   </form>
 

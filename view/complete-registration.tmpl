@@ -1,6 +1,6 @@
 {{ template "layout" . }}
 
-{{ define "title" }}Complete Registration - {{ .App.Config.ApplicationName }}{{ end }}
+{{ define "title" }}完成注册 - {{ .App.Config.ApplicationName }}{{ end }}
 
 {{ define
   "content"
@@ -14,9 +14,9 @@
       <div class="divider">or</div>
       {{ $dividerNeeded = false }}
     {{ end }}
-    <h3>Migrate an existing user</h3>
+    <h3>迁移一个现有用户</h3>
 
-    <p>You can link this identity provider to an existing {{ .App.Config.ApplicationName }} account. <span class="warning-message">If you do so, you will no longer be able to log in using your {{ .App.Config.ApplicationName }} password. You'll need to use your Minecraft Token to log in to Minecraft launchers.</span></p>
+    <p>你可以将该身份提供商关联到 {{ .App.Config.ApplicationName }} 帐号. <span class="warning-message">一旦关联完成后，你将无法使用 {{ .App.Config.ApplicationName }} 密码登陆。你需要使用Minecraft Token在启动器中登陆。</span></p>
 
     <form action="{{ .App.FrontEndURL }}/web/oidc-migrate" method="post">
       <input type="text" name="username" placeholder="Username" required />
@@ -28,7 +28,7 @@
         placeholder="Password"
         required
       />
-      <input type="submit" value="Link account" />
+      <input type="submit" value="关联帐号" />
     </form>
     {{ $dividerNeeded := true }}
   {{ end }}
@@ -39,29 +39,29 @@
       <div class="divider">or</div>
       {{ $dividerNeeded = false }}
     {{ end }}
-    <h3>Create a player</h3>
+    <h3>创建新角色</h3>
     {{ if .App.Config.CreateNewPlayer.AllowChoosingUUID }}
-      <p>Complete registration by creating a new player:</p>
+      <p>创建你的第一个角色以完成注册：</p>
     {{ else }}
-      <p>Complete registration by creating a new player with a random UUID:</p>
+      <p>创建一个随机UUID的新角色以完成注册：</p>
     {{ end }}
     <form action="{{ .App.FrontEndURL }}/web/register" method="post">
       <input
         required
         type="text"
         name="playerName"
-        placeholder="Player name"
+        placeholder="角色名"
         maxlength="{{ .App.Constants.MaxUsernameLength }}"
         value="{{ .PreferredPlayerName }}"
         {{ if not .AllowChoosingPlayerName }}
-          title="Choosing a player name is not allowed."
+          title="该实例不允许自定义角色名"
           disabled
         {{ end }}
       />
       <input
         type="text"
         name="email"
-        placeholder="Leave this blank"
+        placeholder="留空"
         class="honeypot"
       />
       <input
@@ -76,7 +76,7 @@
             class="long"
             type="text"
             name="uuid"
-            placeholder="Player UUID (leave blank for random)"
+            placeholder="玩家 UUID （留空以随机生成）"
             pattern="^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$"
           />
         </p>
@@ -84,10 +84,10 @@
       <input type="text" name="inviteCode" value="{{ .InviteCode }}" hidden />
       <input hidden name="returnUrl" value="{{ .URL }}" />
       {{ if .InviteCode }}
-        <p><em>Using invite code {{ .InviteCode }}</em></p>
+        <p><em>将使用邀请码 {{ .InviteCode }} 注册</em></p>
       {{ end }}
       <p>
-        <input type="submit" value="Register" />
+        <input type="submit" value="注册" />
       </p>
     </form>
     {{ $dividerNeeded = true }}
@@ -99,31 +99,30 @@
       <div class="divider">or</div>
       {{ $dividerNeeded = false }}
     {{ end }}
-    <h3>Register from an existing Minecraft player</h3>
+    <h3>从现有Minecraft帐号注册</h3>
     {{ if and .App.Config.RegistrationExistingPlayer.RequireInvite (not
       .InviteCode)
     }}
-      <p>Registration as an existing player is invite-only.</p>
+      <p>现有玩家注册仅限邀请。</p>
     {{ else }}
       {{ if .App.Config.ImportExistingPlayer.RequireSkinVerification }}
         <p>
-          Register a new account with the UUID of an existing
-          {{ .App.Config.ImportExistingPlayer.Nickname }} account.
-          Requires verification that you own the account.
+          使用现有{{ .App.Config.ImportExistingPlayer.Nickname }}帐号来注册新帐号。
+          这需要验证您拥有该账号。
         </p>
         {{ if .InviteCode }}
-          <p><em>Using invite code {{ .InviteCode }}</em></p>
+          <p><em>将使用邀请码 {{ .InviteCode }} 注册</em></p>
         {{ end }}
         <form action="{{ .App.FrontEndURL }}/web/register-challenge" method="get">
           <input
             required
             type="text"
             name="playerName"
-            placeholder="{{ .App.Config.ImportExistingPlayer.Nickname }} Player name"
+            placeholder="{{ .App.Config.ImportExistingPlayer.Nickname }}帐号角色名称"
             maxlength="{{ .App.Constants.MaxUsernameLength }}"
             {{ if not .AllowChoosingPlayerName }}
               value="{{ .PreferredPlayerName }}"
-              title="Choosing a player name is not allowed."
+              title="该实例不允许自定义角色名"
               disabled
             {{ end }}
           />
@@ -140,19 +139,18 @@
             value="{{ .InviteCode }}"
           />
           <input hidden name="returnUrl" value="{{ .URL }}" />
-          <input type="submit" value="Continue" />
+          <input type="submit" value="继续" />
         </form>
       {{ else }}
         <p>
-          Register a new account with the UUID of an existing
-          {{ .App.Config.ImportExistingPlayer.Nickname }} account.
+          使用现有{{ .App.Config.ImportExistingPlayer.Nickname }}帐号的 UUID 注册新账号。
         </p>
         <form action="{{ .App.FrontEndURL }}/web/register" method="post">
           <input
             required
             type="text"
             name="playerName"
-            placeholder="{{ .App.Config.ImportExistingPlayer.Nickname }} Player name"
+            placeholder="{{ .App.Config.ImportExistingPlayer.Nickname }}帐号角色名称"
             maxlength="{{ .App.Constants.MaxUsernameLength }}"
           />
           <input
@@ -169,9 +167,9 @@
             value="{{ .InviteCode }}"
           />
           {{ if .InviteCode }}
-            <p><em>Using invite code {{ .InviteCode }}</em></p>
+            <p><em>将使用邀请码 {{ .InviteCode }} 注册</em></p>
           {{ end }}
-          <input type="submit" value="Register" />
+          <input type="submit" value="注册" />
         </form>
       {{ end }}
     {{ end }}
