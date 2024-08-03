@@ -1,12 +1,11 @@
 {{ template "layout" . }}
 
-{{ define "title" }}Admin - Drasl{{ end }}
+{{ define "title" }}管理 - Drasl{{ end }}
 
 {{ define "content" }}
   {{ template "header" . }}
 
-
-  <h4>Pending Invites</h4>
+  <h4>未使用的邀请</h4>
 
   <div style="text-align: right">
     <form
@@ -15,15 +14,15 @@
       method="post"
     >
       <input hidden name="returnUrl" value="{{ .URL }}" />
-      <input type="submit" value="+ New Invite" />
+      <input type="submit" value="+ 新邀请" />
     </form>
   </div>
   {{ if .Invites }}
     <table>
       <thead>
         <tr>
-          <td style="width: 50%">Link</td>
-          <td>Date Generated</td>
+          <td style="width: 50%">链接</td>
+          <td>生成日期</td>
           <td></td>
         </tr>
       </thead>
@@ -50,7 +49,7 @@
                   value="{{ $invite.Code }}"
                   hidden
                 />
-                <input type="submit" value="× Delete" />
+                <input type="submit" value="× 删除" />
               </form>
             </td>
           </tr>
@@ -58,11 +57,10 @@
       </tbody>
     </table>
   {{ else }}
-    No invites to show.
+    没有邀请可显示。
   {{ end }}
 
-
-  <h4>All Users</h4>
+  <h4>所有用户</h4>
 
   <div style="display: none">
     {{ range $user := .Users }}
@@ -70,7 +68,7 @@
         id="delete-{{ $user.Username }}"
         action="{{ $.App.FrontEndURL }}/drasl/delete-user"
         method="post"
-        onsubmit="return confirm('Are you sure? This action is irreversible.');"
+        onsubmit="return confirm('确定吗？此操作不可逆。');"
       >
         <input hidden name="returnUrl" value="{{ $.URL }}" />
         <input type="text" name="username" value="{{ $user.Username }}" />
@@ -82,11 +80,11 @@
     <table>
       <thead>
         <tr>
-          <td colspan="2">Profile</td>
-          <td>Player Name</td>
-          <td>Admin</td>
-          <td>Locked</td>
-          <td>Delete Account</td>
+          <td colspan="2">个人资料</td>
+          <td>玩家名称</td>
+          <td>管理员</td>
+          <td>锁定</td>
+          <td>删除账户</td>
         </tr>
       </thead>
       <tbody>
@@ -108,7 +106,7 @@
             <td>
               <input
                 name="admin-{{ $user.Username }}"
-                title="Admin?"
+                title="管理员？"
                 type="checkbox"
                 {{ if
                   $user.IsAdmin
@@ -127,7 +125,7 @@
             <td>
               <input
                 name="locked-{{ $user.Username }}"
-                title="Locked?"
+                title="锁定？"
                 type="checkbox"
                 {{ if
                   $user.IsLocked
@@ -140,7 +138,7 @@
               <input
                 type="submit"
                 form="delete-{{ $user.Username }}"
-                value="× Delete"
+                value="× 删除"
               />
             </td>
           </tr>
@@ -149,7 +147,7 @@
     </table>
     <p style="text-align: center">
       <input hidden name="returnUrl" value="{{ $.URL }}" />
-      <input type="submit" value="Save Changes" />
+      <input type="submit" value="保存更改" />
     </p>
   </form>
 

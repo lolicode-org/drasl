@@ -2,9 +2,9 @@ package main
 
 // Build constants
 
-const VERSION = "1.1.1"
+const VERSION = "CN 1.0.0 - 1.1.1"
 
-const REPOSITORY_URL = "https://github.com/unmojang/drasl"
+const REPOSITORY_URL = "https://github.com/lolicode-org/drasl"
 
 const LICENSE = "GPLv3"
 const LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.en.html"

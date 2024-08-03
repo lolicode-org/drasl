@@ -1,11 +1,10 @@
 {{ template "layout" . }}
 
-{{ define "title" }}{{ .ProfileUser.PlayerName }}'s Profile - Drasl{{ end }}
+{{ define "title" }}{{ .ProfileUser.PlayerName }}的个人资料 - Drasl{{ end }}
 
 {{ define "content" }}
 
   {{ template "header" . }}
-
 
   <h2 style="text-align: center;">{{ .ProfileUser.PlayerName }}</h2>
   <h6 style="text-align: center;">
@@ -16,7 +15,7 @@
       <canvas id="skin-canvas"></canvas>
     </div>
   {{ else }}
-    No skin yet.
+    暂无皮肤。
   {{ end }}
   <form
     action="{{ .App.FrontEndURL }}/drasl/update"
@@ -26,7 +25,7 @@
     {{ if or .App.Config.AllowChangingPlayerName .User.IsAdmin }}
       <p>
         <label for="player-name"
-          >Player Name (can be different from username)</label
+          >玩家名称（可与用户名不同）</label
         ><br />
         <input
           type="text"
@@ -37,17 +36,17 @@
       </p>
     {{ end }}
     <p>
-      <label for="password">Password</label><br />
+      <label for="password">密码</label><br />
       <input
         type="password"
         name="password"
         id="password"
         class="long"
-        placeholder="Leave blank to keep"
+        placeholder="留空保持不变"
       />
     </p>
     <p>
-      <label for="preferred-language">Preferred Language</label><br />
+      <label for="preferred-language">首选语言</label><br />
       <select
         name="preferredLanguage"
         id="preferred-language"
@@ -87,7 +86,7 @@
           value="zh"
           {{ if eq .ProfileUser.PreferredLanguage "zh" }}selected{{ end }}
         >
-          Chinese
+          中文
         </option>
         <option
           value="hr"
@@ -332,29 +331,29 @@
       </select>
     </p>
     {{ if or .App.Config.AllowSkins .User.IsAdmin }}
-      <h4>Skin</h4>
+      <h4>皮肤</h4>
       <p>
-        <label for="skin-url">URL to skin file</label><br />
+        <label for="skin-url">在线皮肤文件的 URL</label><br />
         <input
           type="text"
           name="skinUrl"
           id="skin-url"
           class="long"
-          placeholder="Leave blank to keep"
+          placeholder="留空保持不变"
         />
       </p>
       <p>
-        <label for="skin-file">or instead, upload a skin</label><br />
+        <label for="skin-file">您也可以上传一个皮肤文件</label><br />
         <input type="file" name="skinFile" id="skin-file" />
       </p>
       <p>
         <label for="delete-skin"
-          >or instead, check the box to delete your current skin
+          >勾选此框删除当前皮肤
         </label>
         <input type="checkbox" name="deleteSkin" id="delete-skin" />
       </p>
       <fieldset>
-        <legend>Skin model</legend>
+        <legend>皮肤模型</legend>
         <input
           type="radio"
           id="skin-model-classic"
@@ -362,7 +361,7 @@
           value="classic"
           {{ if eq .ProfileUser.SkinModel "classic" }}checked{{ end }}
         />
-        <label for="skin-model-classic">Classic</label>
+        <label for="skin-model-classic">经典</label>
         <input
           type="radio"
           id="skin-model-slim"
@@ -370,37 +369,36 @@
           value="slim"
           {{ if eq .ProfileUser.SkinModel "slim" }}checked{{ end }}
         />
-        <label for="skin-model-slim">Slim</label>
+        <label for="skin-model-slim">苗条</label>
       </fieldset>
     {{ end }}
     {{ if or .App.Config.AllowCapes .User.IsAdmin }}
-      <h4>Cape</h4>
+      <h4>披风</h4>
       <p>
-        <label for="cape-url">URL to cape file</label><br />
+        <label for="cape-url">在线披风文件的 URL</label><br />
         <input
           type="text"
           name="capeUrl"
           id="cape-url"
           class="long"
-          placeholder="Leave blank to keep"
+          placeholder="留空保持不变"
         />
       </p>
       <p>
-        <label for="cape-file">or instead, upload a cape</label><br />
+        <label for="cape-file">您也可以上传一个披风文件</label><br />
         <input type="file" name="capeFile" id="cape-file" />
       </p>
       <p>
         <label for="delete-cape"
-          >or instead, check the box to delete your current cape
+          >勾选此框删除当前披风
         </label>
         <input type="checkbox" name="deleteCape" id="delete-cape" />
       </p>
     {{ end }}
     {{ if .App.Config.ForwardSkins }}
       <p>
-        <label for="fallback-player">Fallback Player</label><br />
-        UUID or player name. If you don't set a skin or cape, this player's skin
-        on one of the fallback API servers will be used instead.<br />
+        <label for="fallback-player">备用玩家</label><br />
+        输入 UUID 或玩家名。如果您未设置皮肤或披风，将从上游 API 服务器上获取此玩家的皮肤。<br />
         <input
           class="long"
           type="text"
@@ -414,16 +412,16 @@
     <input hidden name="username" value="{{ .ProfileUser.Username }}" />
     <input hidden name="returnUrl" value="{{ .URL }}" />
     <p style="text-align: center;">
-      <input type="submit" value="Save Changes" />
+      <input type="submit" value="保存更改" />
     </p>
   </form>
   <p>
     <details>
-      <summary>Delete Account</summary>
+      <summary>删除账号</summary>
       <form
         action="{{ .App.FrontEndURL }}/drasl/delete-user"
         method="post"
-        onsubmit="return confirm('Are you sure? This action is irreversible.');"
+        onsubmit="return confirm('您确定吗？此操作不可逆。');"
       >
         <input hidden name="username" value="{{ .ProfileUser.Username }}" />
         <input
@@ -435,7 +433,7 @@
             {{ .App.FrontEndURL }}
           {{ end }}"
         />
-        <input type="submit" value="🗙 Delete Account" />
+        <input type="submit" value="🗙 删除账号" />
       </form>
     </details>
   </p>

@@ -5,26 +5,26 @@
         <a class="logo" href="{{ .App.FrontEndURL }}">
           <img
             src="{{ .App.FrontEndURL }}/drasl/public/logo.svg"
-            alt="Drasl logo; a white trefoil knot"
+            alt="Drasl Logo；一个白色的三叶结"
           />DRASL
         </a>
       </h1>
     </div>
     <div style="text-align: right">
-      <a href="{{ .App.FrontEndURL }}/drasl/registration">Register</a>
+      <a href="{{ .App.FrontEndURL }}/drasl/registration">注册</a>
       {{ if .User }}
         {{ if .User.IsAdmin }}
-          <a href="{{ .App.FrontEndURL }}/drasl/admin">Admin</a>
+          <a href="{{ .App.FrontEndURL }}/drasl/admin">管理</a>
         {{ end }}
         <a href="{{ .App.FrontEndURL }}/drasl/profile"
-          >{{ .User.Username }}'s&nbsp;Profile</a
+          >{{ .User.Username }}的个人资料</a
         >
         <form
           style="display: inline"
           action="{{ .App.FrontEndURL }}/drasl/logout"
           method="post"
         >
-          <input type="submit" value="Log Out" />
+          <input type="submit" value="登出" />
         </form>
       {{ end }}
     </div>
